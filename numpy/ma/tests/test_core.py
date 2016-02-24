@@ -4262,6 +4262,20 @@ def test_default_fill_value_complex():
     # regression test for Python 3, where 'unicode' was not defined
     assert_(default_fill_value(1 + 1j) == 1.e20 + 0.0j)
 
+
+def test_ufunc_inplace():
+    # regression test for gh-4425
+    # TODO: move me to a reasonable place
+
+    a = np.ma.array([1, 2, 3, 4], mask=[True, False, False, True])
+    b = np.ma.array([1, 2, 3, 4], mask=[False, True, False, True])
+
+    expected = a.mask & b.mask
+
+    np.ma.add(a, b, out=a)
+
+    assert_array_equal(a.mask, expected)
+
 ###############################################################################
 if __name__ == "__main__":
     run_module_suite()
